@@ -1,6 +1,5 @@
 import { getUrl } from "@/database/appwrite";
 import { useEffect, useState,useRef } from "react"
-import { Link, useParams } from "react-router-dom"
 export const Redirect=()=>{
     const {id}=useParams();
     let [url,SetUrl]=useState(null);
