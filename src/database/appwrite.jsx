@@ -7,7 +7,7 @@ export const createDoc = async ({ data, docId }) => await database.createDocumen
     data).then((resp) => console.log("documnt created sucessfully!!!!!!   ", resp))
 
 export const getDocs = async (query, collection) => await database.listDocuments(databaseID, collection, query);
-export const getDoc= async (id)=>await database.getDocument(databaseID,usersCollection,id,[]).then((resp)=>resp).catch((error)=>new Error(error.message));
+export const getDoc= async (id)=>await database.getDocument(databaseID,usersCollection,id,[]).then((resp)=>resp).catch((error)=>error);
 export const isUser = async (docId) => await database.getDocument(databaseID, googleUserCollectionId, docId, []);
 
 export const shortLink = async ({ id ,url}) => {
