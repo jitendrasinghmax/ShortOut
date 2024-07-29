@@ -12,10 +12,17 @@ export const MyUrls = () => {
     const qrCodeRef=useRef(null);
     let [urlIds, setUrlIds] = useState(null);
     let [urlDetails, setUrlsDetails] = useState([]);
+    let [noUrl,setNoUrl]=useState(null);
     const { user } = useAuth();
     const getClicksHandeler = async (id) => await getClicks(id);
     const getDocHandeler = async () => {
-        await getDoc(user.service=='appwrite'?user.user.$id:user.user.uid).then((resp) => setUrlIds(() => resp.URLID.map((item) => item)))
+        await getDoc(user.service=='appwrite'?user.user.$id:user.user.uid).then((resp) =>{
+            if(resp.code==404){
+                setNoUrl(true);
+                return;
+            }
+            setUrlIds(() => resp.URLID.map((item) => item))
+        })
     }
     useEffect(()=>{
         if(urlIds){
@@ -36,7 +43,7 @@ export const MyUrls = () => {
     console.log(urlDetails)
     console.log(urlIds)
     return (<>
-        {urlDetails.length>0?<div className="flex flex-col items-center gap-4 h-fit ">
+        {noUrl?<div className="flex justify-center"><Button onClick={()=>navigate('/createlink')}>Create Short Link</Button></div>:urlDetails.length>0?<div key={crypto.randomUUID()} className="flex flex-col items-center gap-4 h-fit ">
             {urlDetails.map((item) => <div key={crypto.randomUUID()} className="flex flex-col sm:grid sm:grid-cols-3 sm:grid-rows-3 sm:gap-2 w-[90%] lg:w-[60%] h-fit sm:h-[250px] p-2 bg-gray-700  border-gray-400 border-[solid] border-[2px] rounded-xl">
                 <div className="row-span-3 w-full h-full flex flex-col gap-2 justify-center items-center">
                    <div ref={qrCodeRef}>
@@ -52,7 +59,7 @@ export const MyUrls = () => {
                 <div className=" h-fit text-white font-extrabold w-full col-span-2">Short Url:<a href={`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ""}/` +item.id} className="text-xl text-blue-400">{`${window.location.protocol}//${window.location.hostname}:${window.location.port ? window.location.port : ""}/` +item.id}</a></div>
                 <div className=" h-fit text-white font-extrabold w-full col-span-2 overflow-hidden">Url:<a href={item.url} className="text-xl  text-blue-400">{item.url}</a></div>
             </div>)}
-        </div>:<div className="flex flex-col items-center gap-4 h-fit w-full ">
+        </div>:<div key={crypto.randomUUID()} className="flex flex-col items-center gap-4 h-fit w-full ">
             {[1.2,3,4,5,6].map((item)=><Skeleton className="w-[60%] h-[200px] bg-slate-400"></Skeleton>)}
             </div>}
     </>)
